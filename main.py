@@ -1,14 +1,21 @@
 import pytube
+import downloader
+import json
+
+with open("settings.json", "r") as file:
+    settings = json.load(file)
 
 def main_choice() :
-    
+    choices = ["1", "2", "3", "4"]
     while True :
         print('''
     (1) Download a Youtube video
     (2) Download a Youtube playlist
+    (3) Settings
+    (4) EXIT
              ''')
         choice = input("Choice : ")
-        if choice == "1" or choice == "2":
+        if choice in choices:
             return choice
         else :
             print("Please enter a valid choice")
@@ -34,15 +41,6 @@ def playlist_choice () :
     choice = input("Choice : ")
     return choice
 
-def quality_choice() :
-    qualities = ["144p", "240p", "360p", "480p", "720p", "1080p", "1440p", "2160p", "4320p"]
-    while True:
-        choice = input("Choose the quality (360p, 720p, 1080p, ..., max) : ")
-        if choice in qualities or choice == "max":
-            return choice
-        else:
-            print("Input a valid quality (144p, 240p, 360p, 480p, 720p, 1080p, 1440p, 2160p, 4320p)")
-            continue
     
 def get_urls() :
     print("Enter the links of the videos (end by entering 'STOP'):")
@@ -50,16 +48,51 @@ def get_urls() :
     urls = []
     url = "t"
     while url != "STOP" :
-        url = input()
+        url = input("\nURL : ")
         if url in urls :
             choice = input("This url has already been added. Do you still wish to continue ? (y/n) ")
             if choice != "y":
                 continue
+        elif not url.startswith("https://www.youtube.com/"):
+            print("Enter a valid url")
+            continue
         urls.append(url)
         print(f"{url} added !")
-        print(f" current list : {urls}")
+        print(f"\ncurrent list : {urls}")
     return urls
         
+def change_settings() :
+    choices = ["1","2","3"]
+    while True:
+        print('''
+    (1) Change resolution 
+    (2) Change Download path
+    (3) BACK
+              ''')
+        choice = input("Choice : ")
+        if choice == "1":
+            change_resolution()
+        elif choice == "2":
+            pass
+        elif choice == "3":
+            break
+def change_resolution():
+    print(f"Current resolution : {settings["resolution"]}")
+    resolutions = ["144p", "240p", "360p", "480p", "720p", "1080p", "1440p", "2160p", "4320p"]
+    while True:
+        new_resolution = input("Choose the new resolution (360p, 720p, 1080p, ..., max) : ")
+        if new_resolution in resolutions or new_resolution == "max":
+            settings["resolution"] = new_resolution
+            with open("settings.json", "w") as file:
+                json.dump(settings, file, indent=4)
+            print(f"{new_resolution} set as current resolution")
+            break
+        else:
+            print("Input a valid resolution (144p, 240p, 360p, 480p, 720p, 1080p, 1440p, 2160p, 4320p)")
+            continue
+def change_path():
+    pass
+
 def main():
     while True :
         choice = main_choice()
@@ -68,11 +101,15 @@ def main():
             if choice == "4":
                 continue
             elif choice == "1":
-                quality = quality_choice()
                 urls = get_urls()
                 
         elif choice == "2" :
             playlist_choice()
+        elif choice == "3":
+            change_settings()
+        elif choice == "4":
+            break
         
 main()
+
     
