@@ -52,7 +52,7 @@ def get_urls() :
     while url != "STOP" :
         url = input()
         if url in urls :
-            choice = input("This url has already been added. Do you still wish to continue ? (y/n)")
+            choice = input("This url has already been added. Do you still wish to continue ? (y/n) ")
             if choice != "y":
                 continue
         urls.append(url)
